@@ -19,8 +19,15 @@ final readonly class FrontController
     {
         $filters = [];
 
-        if (!empty($params['category'])) {
-            $filters['category'] = $params['category'];
+        if (!empty($params['category'])) $filters['category'] = $params['category'];
+        if (!empty($params['created_at_from']) || !empty($params['created_at_to'])) {
+            if (!empty($params['created_at_from']) && !empty($params['created_at_to'])) {
+                $filters['created_at'] = ['op' => 'BETWEEN', 'value' => [$params['created_at_from'], $params['created_at_to']]];
+            } elseif (!empty($params['created_at_from'])) {
+                $filters['created_at'] = ['op' => '>=', 'value' => $params['created_at_from']];
+            } elseif (!empty($params['created_at_to'])) {
+                $filters['created_at'] = ['op' => '<=', 'value' => $params['created_at_to']];
+            }
         }
 
         $products = $this->product->getAll($filters);
@@ -29,7 +36,11 @@ final readonly class FrontController
         View::render('front/list', [
             'products' => $products,
             'categories' => $categories,
-            'filters' => $filters,
+            'filters' => [
+                'selected_category' => $params['category'] ?? '',
+                'created_at_from' => $params['created_at_from'] ?? '',
+                'created_at_to' => $params['created_at_to'] ?? '',
+            ],
         ]);
     }
 

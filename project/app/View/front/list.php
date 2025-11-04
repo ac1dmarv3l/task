@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var $filters
+ */
+?>
+
 <!doctype html>
 <html lang="en">
 
@@ -15,38 +21,65 @@
         <h1 class="text-2xl mb-4 text-center"><a href="/">Products</a></h1>
 
         <div class="flex flex-wrap gap-2 m-3 p-3 border border-gray-200 rounded-md">
-            <a href="/admin" class="flex px-4 py-2 border-2 border-indigo-700 rounded-md bg-white text-indigo-700 hover:border-indigo-900 hover:bg-indigo-900 hover:text-white transition-colors">Dashboard</a>
+            <a href="/admin"
+               class="flex px-4 py-2 border-2 border-indigo-700 rounded-md bg-white text-indigo-700 hover:border-indigo-900 hover:bg-indigo-900 hover:text-white transition-colors">Dashboard</a>
             <?php
-            if(isset($_SESSION['admin'])):
-            ?>
-            <a href="/admin/product/create" class="flex px-4 py-2 border-2 border-indigo-700 rounded-md bg-white text-indigo-700 hover:border-green-600 hover:bg-green-600 hover:text-white transition-colors">Create product</a>
-            <a href="/admin/logout" class="flex px-4 py-2 border-2 border-indigo-700 rounded-md bg-white text-indigo-700 hover:border-red-500 hover:bg-red-500 hover:text-white transition-colors">Logout</a>
+            if (isset($_SESSION['admin'])):
+                ?>
+                <a href="/admin/product/create"
+                   class="flex px-4 py-2 border-2 border-indigo-700 rounded-md bg-white text-indigo-700 hover:border-green-600 hover:bg-green-600 hover:text-white transition-colors">Create
+                    product</a>
+                <a href="/admin/logout"
+                   class="flex px-4 py-2 border-2 border-indigo-700 rounded-md bg-white text-indigo-700 hover:border-red-500 hover:bg-red-500 hover:text-white transition-colors">Logout</a>
             <?php
             endif;
             ?>
         </div>
 
-        <form method="GET" class="flex flex-row p-3 m-3 gap-3">
-            <div class="flex flex-row items-center justify-between w-full">
-                <label class="w-full">
-                    <select name="category"
-                            class="w-full border border-gray-300 rounded-md px-3 py-3">
-                        <option value="">All categories</option>
+        <form method="GET" class="flex flex-wrap gap-3 p-3 m-3">
+            <div class="flex flex-col md:flex-row items-start md:items-center gap-3 w-full">
+                <div class="flex-grow w-full">
+                    <label for="category" class="block mb-1">Category:</label>
+                    <label>
+                        <select name="category" class="border border-gray-300 rounded-md px-3 py-3 w-full">
+                            <option value="">All categories</option>
+                            <?php foreach ($categories ?? [] as $category): ?>
+                                <option value="<?php echo htmlspecialchars($category); ?>" <?php echo $category === $filters['selected_category'] ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($category); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label>
+                </div>
 
-                        <?php foreach ($categories ?? [] as $category): ?>
-                            <option value="<?php echo htmlspecialchars($category); ?>" <?php echo (isset($filters['category']) && $filters['category'] === $category) ? 'selected' : ''; ?>
-                                    class="p-2 mx-2">
-                                <?php echo htmlspecialchars($category); ?>
-                            </option>
-                        <?php endforeach; ?>
+                <!-- from date to date -->
+                <div class="items-center justify-around flex flex-row gap-3 w-full">
+                    <div class="w-full">
+                        <label for="created_at_from" class="block mb-1">From date:</label>
+                        <label>
+                            <input type="date" name="created_at_from"
+                                   class="border border-gray-300 rounded-md px-3 py-3 w-full"
+                                   value="<?php echo htmlspecialchars($filters['created_at_from']); ?>">
+                        </label>
+                    </div>
 
-                    </select>
-                </label>
+                    <div class="w-full">
+                        <label for="created_at_to" class="block mb-1">To date:</label>
+                        <label>
+                            <input type="date" name="created_at_to"
+                                   class="border border-gray-300 rounded-md px-3 py-3 w-full"
+                                   value="<?php echo htmlspecialchars($filters['created_at_to']); ?>">
+                        </label>
+                    </div>
+                </div>
             </div>
-            <button type="submit"
-                    class="flex px-4 py-2 border-2 border-indigo-700 rounded-md bg-white text-indigo-700 hover:border-indigo-900 hover:bg-indigo-900 hover:text-white transition-colors">
-                Filter
-            </button>
+
+            <div>
+                <button type="submit"
+                        class="flex px-4 py-2 border-2 border-indigo-700 rounded-md bg-white text-indigo-700 hover:border-indigo-900 hover:bg-indigo-900 hover:text-white transition-colors">
+                    Filter
+                </button>
+            </div>
         </form>
 
         <!-- Products Grid -->
